@@ -161,29 +161,38 @@ def iterativeDeepeningSearch(problem):
 
     """
     "*** YOUR CODE HERE ***"
-    start_state = problem.getStartState()
-    if (problem.goalTest(start_state)): 
-        #no actions needed if the start state is already the goal
-        return start_state
-    limit = 1
-    explored = []
-    explored.append(start_state)
-    while limit <= maxDepth:
-        frontier = Stack()
+    def dfsHelper(problem, limit):
+        frontier = []
+        explored = []
+        frontier_states = []
+        start_state = problem.getStartState()
+        #([path],[actions])
+        frontier.push(([start_state],[]))
         while not frontier.isEmpty():
-            cur_state = frontier.pop()
+            cur_info = frontier.pop()
+            depth = len(cur_info[0])-1
+            cur_state = cur_info[0][depth]
             if (problem.goalTest(cur_state)):
                 #if the cur_state is the goal, return
-                return cur_state
-            #check limit bound
+                return cur_info[1]
             explored.append(cur_state)
+            if (depth < limit):
+                continue
             next_actions = problem.getActions()
             for action in next_actions:
                 next_state = problem.getResult(cur_state,action)
-                if ((next_state not in explored) and (next_state not in frontier)):
-                    frontier.push(next_state)
+                if next_state not in explored and next_state not in frontier_states:
+                    new_info = cur_info
+                    new_info[0].append(next_state)
+                    new_info[1].append(action)
+                    frontier_states.append(next_state)
+    limit = 0
+    while True:
+        #will always find a solution
+        solution = dfsHelper(problem,limit)
+        if (solution != None):
+            return solution
         limit += 1
-    #return failure
     util.raiseNotDefined()
 
 def aStarSearch(problem, heuristic=nullHeuristic):
