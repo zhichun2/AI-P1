@@ -161,7 +161,37 @@ def iterativeDeepeningSearch(problem):
 
     """
     "*** YOUR CODE HERE ***"
+    # print("problem:", problem)
+    # print("Start:", problem.getStartState())
+    # print("Is the start a goal?", problem.goalTest(problem.getStartState()))
+    # print("Actions from start state:", problem.getActions(problem.getStartState()))
+    # actions = problem.getActions(problem.getStartState())
+    # for action in actions:
+    #     print(problem.getResult(problem.getStartState(), action))
+    start_state = problem.getStartState()
+    if (problem.goalTest(start_state)): 
+        #no actions needed if the start state is already the goal
+        return []
+    limit = 1
+    explored = []
+    explored.append(start_state)
+    frontier = Stack()
+    while not frontier.isEmpty():
+        #check limit bound
+        frontier = Stack()
+        cur_state = frontier.pop()
+        if (problem.goalTest(cur_state)):
+           return cur_state
+        next_actions = problem.getActions()
+        for action in next_actions:
+            next_state = problem.getResult(cur_state,action)
+            frontier.push(next_state)
+        if frontier.isEmpty():
+            limit += 1
+    #return failure
+            
     util.raiseNotDefined()
+
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
