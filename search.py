@@ -136,7 +136,6 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
-
 def iterativeDeepeningSearch(problem):
     """
     Perform DFS with increasingly larger depth. Begin with a depth of 1 and increment depth by 1 at every step.
@@ -167,25 +166,25 @@ def iterativeDeepeningSearch(problem):
         frontier_states = []
         start_state = problem.getStartState()
         #([path],[actions])
-        frontier.push(([start_state],[]))
-        while not frontier.isEmpty():
+        frontier.append(([start_state],[]))
+        while not (len(frontier) == 0):
             cur_info = frontier.pop()
             depth = len(cur_info[0])-1
             cur_state = cur_info[0][depth]
             if (problem.goalTest(cur_state)):
-                #if the cur_state is the goal, return
+                #if the cur_state is the goal, return the actions leading to it
                 return cur_info[1]
             explored.append(cur_state)
             if (depth < limit):
-                continue
-            next_actions = problem.getActions()
-            for action in next_actions:
-                next_state = problem.getResult(cur_state,action)
-                if next_state not in explored and next_state not in frontier_states:
-                    new_info = cur_info
-                    new_info[0].append(next_state)
-                    new_info[1].append(action)
-                    frontier_states.append(next_state)
+                next_actions = problem.getActions(cur_state)
+                for action in next_actions:
+                    next_state = problem.getResult(cur_state,action)
+                    if next_state not in explored and next_state not in frontier_states:
+                        new_info = cur_info
+                        new_info[0].append(next_state)
+                        new_info[1].append(action)
+                        frontier.append(new_info)
+                        frontier_states.append(next_state)
     limit = 0
     while True:
         #will always find a solution
