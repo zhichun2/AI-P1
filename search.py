@@ -198,6 +198,42 @@ def iterativeDeepeningSearch(problem):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    frontier = PriorityQueue()
+    explored = []
+    frontier_states = []
+    startNode = Node(problem.getStartState(), None, None, 0)
+    #the start state has parent and action both set to None
+
+    def backtrackActions(node):
+        #return the series of actions leading to that state
+        actions = [node.action]
+        parent = node.parent
+        while (parent is not None):
+            actions.append(parent.action)
+            node = parent
+            parent = node.parent
+        return actions
+
+    while (len(frontier) > 0):
+        cur_node = frontier.pop()
+        if problem.goalTest(cur_node.state):
+            return backtrackActions(cur_node)
+        explored.append(cur_node.state)
+        next_actions = problem.getActions(cur_node.state)
+        for action in next_actions:
+            new_state = problem.getResult(cur_node.state, action)
+            step_cost = getCost(cur_node.state, action)
+            new_node = (new_state, cur_node.state, action, step_cost)
+            #f(n) = g(n) + h(n) where n is the new_state
+            priority = getCostOfActions(backtrackActions(new_state)) + heuristic(problem, new_state) 
+            if next_state not in frontier_states and next_state not in explored:
+                frontier.push(new_node, priority)
+                frontier_states.append(new_state)
+            else:
+                if next_state in frontier_states:
+                    #handle possible replace
+                    update(new_node, priority)
+    util.raiseNotDefined()
     util.raiseNotDefined()
 
 # Abbreviations
