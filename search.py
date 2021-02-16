@@ -180,11 +180,12 @@ def iterativeDeepeningSearch(problem):
                 for action in next_actions:
                     next_state = problem.getResult(cur_state,action)
                     if next_state not in explored and next_state not in frontier_states:
-                        new_info = cur_info
+                        new_info = copy.deepcopy(cur_info)
                         new_info[0].append(next_state)
                         new_info[1].append(action)
                         frontier.append(new_info)
                         frontier_states.append(next_state)
+        return None
     limit = 0
     while True:
         #will always find a solution
@@ -193,7 +194,7 @@ def iterativeDeepeningSearch(problem):
             return solution
         limit += 1
     util.raiseNotDefined()
-
+    
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
