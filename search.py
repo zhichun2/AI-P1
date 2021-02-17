@@ -203,30 +203,36 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     frontier_states = []
     startNode = Node(problem.getStartState(), None, None, 0)
     #the start state has parent and action both set to None
+    frontier.push(startNode,heuristic(startNode.state, problem))
 
     def backtrackActions(node):
         #return the series of actions leading to that state
-        actions = [node.action]
+        actions = []
+        if node is None: return []
+        if node.action is not None:
+            actions.append(node.action)
         parent = node.parent
         while (parent is not None):
-            actions.append(parent.action)
+            if (parent.action is not None):
+                actions.append(parent.action)
             node = parent
             parent = node.parent
         return actions
 
     while (not frontier.isEmpty()):
         cur_node = frontier.pop()
-        if problem.goalTest(cur_node.state):
+        if problem.goalTest(cur_node[0].state):
             print("called backtrack")
-            return backtrackActions(cur_node)
+            return backtrackActions(cur_node[0])
         explored.append(cur_node.state)
         next_actions = problem.getActions(cur_node.state)
+        print(next_actions)
         for action in next_actions:
             new_state = problem.getResult(cur_node.state, action)
-            step_cost = getCost(cur_node.state, action)
+            step_cost = problem.getCost(cur_node.state, action)
             new_node = (new_state, cur_node.state, action, step_cost)
             #f(n) = g(n) + h(n) where n is the new_state
-            priority = getCostOfActions(backtrackActions(new_state)) + heuristic(problem, new_state) 
+            priority = problem.getCostOfActions(backtrackActions(new_state)) + heuristic(new_state, problem) 
             if next_state not in frontier_states and next_state not in explored:
                 frontier.push(new_node, priority)
                 frontier_states.append(new_state)
@@ -234,6 +240,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                if next_state in frontier_states and next_state not in explored:
                     #handle possible replace
                     frontier.update(new_node, priority)
+    return None 
 
 # Abbreviations
 bfs = breadthFirstSearch
