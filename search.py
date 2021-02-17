@@ -198,7 +198,7 @@ def iterativeDeepeningSearch(problem):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    frontier = PriorityQueue()
+    frontier = util.PriorityQueue()
     explored = []
     frontier_states = []
     startNode = Node(problem.getStartState(), None, None, 0)
@@ -214,19 +214,18 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             parent = node.parent
         return actions
 
-    while (len(frontier) > 0):
+    while (not frontier.isEmpty()):
         cur_node = frontier.pop()
         if problem.goalTest(cur_node.state):
-            #When I found the goal state, backtrack the series of actions leading to it
+            print("called backtrack")
             return backtrackActions(cur_node)
         explored.append(cur_node.state)
         next_actions = problem.getActions(cur_node.state)
         for action in next_actions:
-            #each new_state is a child of the current state
             new_state = problem.getResult(cur_node.state, action)
             step_cost = getCost(cur_node.state, action)
             new_node = (new_state, cur_node.state, action, step_cost)
-            #f(n) = g(n) + h(n) where n is the new_state, priority is f(n)
+            #f(n) = g(n) + h(n) where n is the new_state
             priority = getCostOfActions(backtrackActions(new_state)) + heuristic(problem, new_state) 
             if next_state not in frontier_states and next_state not in explored:
                 frontier.push(new_node, priority)
@@ -235,7 +234,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                if next_state in frontier_states and next_state not in explored:
                     #handle possible replace
                     frontier.update(new_node, priority)
-    util.raiseNotDefined()
 
 # Abbreviations
 bfs = breadthFirstSearch
