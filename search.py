@@ -214,30 +214,29 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         parent = node.parent
         while (parent is not None):
             if (parent.action is not None):
-                actions.append(parent.action)
+                actions = [parent.action] + actions
             node = parent
             parent = node.parent
         return actions
 
     while (not frontier.isEmpty()):
         cur_node = frontier.pop()
-        if problem.goalTest(cur_node[0].state):
-            print("called backtrack")
-            return backtrackActions(cur_node[0])
+        if problem.goalTest(cur_node.state):
+            #print("called backtrack")
+            return backtrackActions(cur_node)
         explored.append(cur_node.state)
         next_actions = problem.getActions(cur_node.state)
-        print(next_actions)
         for action in next_actions:
             new_state = problem.getResult(cur_node.state, action)
             step_cost = problem.getCost(cur_node.state, action)
-            new_node = (new_state, cur_node.state, action, step_cost)
+            new_node = Node(new_state, cur_node, action, step_cost)
             #f(n) = g(n) + h(n) where n is the new_state
-            priority = problem.getCostOfActions(backtrackActions(new_state)) + heuristic(new_state, problem) 
-            if next_state not in frontier_states and next_state not in explored:
+            priority = problem.getCostOfActions(backtrackActions(new_node)) + heuristic(new_state, problem) 
+            if new_state not in frontier_states and new_state not in explored:
                 frontier.push(new_node, priority)
                 frontier_states.append(new_state)
             else:
-               if next_state in frontier_states and next_state not in explored:
+               if new_state in frontier_states and new_state not in explored:
                     #handle possible replace
                     frontier.update(new_node, priority)
     return None 
