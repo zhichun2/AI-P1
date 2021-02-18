@@ -283,6 +283,9 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
+        #state takes in the current position (x,y) and a list of corners that 
+        #we have touched
+        self.state = ((),[])
         "*** YOUR CODE HERE ***"
 
     def getStartState(self):
@@ -291,14 +294,23 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #state is a tuple: current position, the path
+        state = (self.startingPosition,[])
+        for corner in self.corners:
+            if (corner == self.startingPosition):
+                state[1].append(self.startingPosition)
+        return state
+        #util.raiseNotDefined()
 
     def goalTest(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if (len(state[1]) == 4):
+            return True
+        return False
+        #util.raiseNotDefined()
 
     def getActions(self, state):
         """
@@ -319,6 +331,21 @@ class CornersProblem(search.SearchProblem):
         """
         Given a state and an action, returns resulting state 
         """
+        (x, y) = state[0]
+        #current path
+        #add the current position to the path
+        corners_passed = copy.deepcopy(state[1])
+        dx, dy = Actions.directionToVector(action)
+        nextx, nexty = int(x + dx), int(y + dy)
+        new_position = (nextx, nexty)
+        for corner in self.corners:
+            if (corner == new_position) and (new_position not in corners_passed):
+                corners_passed.append(new_position)
+                break
+        new_state = (new_position, corners_passed)
+        return new_state
+        #append the current position to the path
+        #update the new position
         # Expanded count is in getActions()
         
         # Add a successor state to the successor list if the action is legal
