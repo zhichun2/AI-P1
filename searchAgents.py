@@ -517,10 +517,28 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    if (problem.goalTest(state) == True):
+        return 0
+    return 1
+    state, foodGrid = state[0], state[1]
+    all_food = foodGrid.asList()
+    max_distance = -1
+    for point in all_food:
+        #find the distance to the farthest food
+        if (problem,point) in problem.heuristicInfo:
+            #save the distances we've found in the dict so we don't have to go through
+            #BFS everytime
+            cur_distance = problem.heuristicInfo[(problem,point)]
+        elif (point,problem) in problem.heuristicInfo:
+            cur_distance = problem.heuristicInfo[(point,problem)]
+        else:
+            cur_distance = mazeDistance(position, point, problem.startingGameState)
+            problem.heuristicInfo[(point,problem)] = cur_distance
+        if ((cur_distance > max_distance) or (max_distance == -1)):
+            max_distance = cur_distance
+    return max_distance
 
+    "*** YOUR CODE HERE ***"
 def mazeDistance(point1, point2, gameState):
     """
     Returns the maze distance between any two points, using the search functions
