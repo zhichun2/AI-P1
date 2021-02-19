@@ -128,7 +128,30 @@ def breadthFirstSearch(problem):
     You are not required to implement this, but you may find it useful for Q5.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.Queue()
+    explored = []
+    frontier_states = []
+    start_state = problem.getStartState()
+    #([path],[actions])
+    frontier.push(([start_state],[]))
+    while not (frontier.isEmpty()):
+        cur_info = frontier.pop()
+        depth = len(cur_info[0])-1
+        cur_state = cur_info[0][depth]
+        if (problem.goalTest(cur_state)):
+            #if the cur_state is the goal, return the actions leading to it
+            return cur_info[1]
+        explored.append(cur_state)
+        next_actions = problem.getActions(cur_state)
+        for action in next_actions:
+            next_state = problem.getResult(cur_state,action)
+            if next_state not in explored and next_state not in frontier_states:
+                new_info = copy.deepcopy(cur_info)
+                new_info[0].append(next_state)
+                new_info[1].append(action)
+                frontier.push(new_info)
+                frontier_states.append(next_state)
+    return None
 
 def nullHeuristic(state, problem=None):
     """
